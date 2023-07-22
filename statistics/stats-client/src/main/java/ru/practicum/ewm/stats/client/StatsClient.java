@@ -28,7 +28,7 @@ public class StatsClient {
     private final RestTemplate client;
     private final ObjectMapper mapper;
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_FORMAT);
-    private final String url = "http://localhost:9090";
+    private final String url = "http://stats-server:9090";
 
     public String saveRequestLog(@NotNull RequestLogDto dto) {
         String path = url + "/hit";
