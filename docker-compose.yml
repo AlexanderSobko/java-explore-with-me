@@ -1,7 +1,21 @@
 version: '3.1'
 services:
+  main-service:
+    build: main-service
+    image: main-service-image
+    container_name: main-service-container
+    ports:
+      - "8080:8080"
+    depends_on:
+      main-service-db:
+        condition: service_healthy
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://main-service-db:6541/main-service
+      - DB_USERNAME=postgres
+      - DB_PASSWORD=password
+
   stats-server:
-    build: ./statistics/stats-server
+    build: statistics/stats-server
     image: stats-server-image
     container_name: stats-server-container
     ports:
@@ -28,20 +42,6 @@ services:
       - POSTGRES_DB=stats
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=password
-
-  main-service:
-    build: main-service
-    image: main-service-image
-    container_name: main-service-container
-    ports:
-      - "8080:8080"
-    depends_on:
-      main-service-db:
-        condition: service_healthy
-    environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://main-service-db:6541/main-service
-      - DB_USERNAME=postgres
-      - DB_PASSWORD=password
 
   main-service-db:
     image: postgres:14-alpine
