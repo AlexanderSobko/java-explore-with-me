@@ -12,6 +12,8 @@ import java.time.LocalDateTime;
 @Entity
 @Builder
 @ToString
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "request_logs")
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class RequestLog {
