@@ -1,19 +1,19 @@
 package ru.practicum.ewm.stats.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 import ru.practicum.ewm.stats.dto.RequestLogDto;
 import ru.practicum.ewm.stats.dto.StatsDto;
+import ru.practicum.ewm.stats.repository.StatsParamDto;
 import ru.practicum.ewm.stats.service.StatService;
 
 import javax.validation.Valid;
-import java.time.LocalDateTime;
 import java.util.List;
-
-import static ru.practicum.ewm.stats.dto.RequestLogDto.DATE_FORMAT;
 
 @Validated
 @RestController
@@ -28,11 +28,7 @@ public class StatsController {
     }
 
     @GetMapping("/stats")
-    public ResponseEntity<List<StatsDto>> getStatistics(
-            @RequestParam @DateTimeFormat(pattern = DATE_FORMAT) LocalDateTime start,
-            @RequestParam @DateTimeFormat(pattern = DATE_FORMAT) LocalDateTime end,
-            @RequestParam(required = false) List<String> uris,
-            @RequestParam(value = "unique", required = false) boolean isUnique) {
-        return ResponseEntity.ok(statService.getStatistics(start, end, uris, isUnique));
+    public ResponseEntity<List<StatsDto>> getStatistics(@Valid StatsParamDto dto) {
+        return ResponseEntity.ok(statService.getStatistics(dto));
     }
 }
