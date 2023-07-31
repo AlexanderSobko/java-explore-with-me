@@ -10,7 +10,7 @@ services:
       main-service-db:
         condition: service_healthy
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://main-service-db:6541/main-service
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://main-service-db:5432/main
       - DB_USERNAME=postgres
       - DB_PASSWORD=password
 
@@ -47,13 +47,13 @@ services:
     image: postgres:14-alpine
     container_name: main-service-bd-container
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U postgres -d main-service" ]
+      test: [ "CMD-SHELL", "pg_isready -U postgres -d main" ]
       interval: 5s
       timeout: 5s
       retries: 5
     ports:
-      - "5432:6541"
+      - "6542:5432"
     environment:
-      - POSTGRES_DB=main-service
+      - POSTGRES_DB=main
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=password

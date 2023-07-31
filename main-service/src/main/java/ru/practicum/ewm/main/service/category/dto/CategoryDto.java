@@ -11,6 +11,8 @@ import javax.validation.constraints.NotBlank;
 @Setter
 @Builder
 @ToString
+@NoArgsConstructor
+@AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class CategoryDto {
 
