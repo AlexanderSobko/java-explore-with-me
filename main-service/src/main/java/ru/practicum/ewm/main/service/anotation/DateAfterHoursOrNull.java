@@ -6,9 +6,10 @@ import java.lang.annotation.*;
 
 @Documented
 @Constraint(validatedBy = DateAfterHoursOrNullValidator.class)
-@Target( { ElementType.METHOD, ElementType.FIELD })
+@Target({ElementType.METHOD, ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface DateAfterHoursOrNull {
+
     String message();
 
     int hours();

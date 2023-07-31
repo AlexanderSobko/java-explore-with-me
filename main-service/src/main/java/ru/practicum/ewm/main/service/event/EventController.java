@@ -71,7 +71,7 @@ public class EventController {
         logRequest(request);
         return ResponseEntity.ok(service.getPublishedEventById(eventId));
     }
-    
+
     private void logRequest(HttpServletRequest request) {
         client.saveRequestLog(RequestLogDto.builder()
                 .uri(request.getRequestURI())

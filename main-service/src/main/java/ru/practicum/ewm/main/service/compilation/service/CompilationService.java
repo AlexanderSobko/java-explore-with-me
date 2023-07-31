@@ -10,9 +10,13 @@ import java.util.List;
 public interface CompilationService {
 
     List<CompilationDto> getAllCompilations(boolean pinned, int from, int size);
+
     Compilation getCompilationById(int compId);
+
     CompilationDto saveCompilation(CompilationCreateDto dto);
+
     void deleteCompilation(int compId);
+
     CompilationDto updateCompilation(int compId, CompilationUpdateDto dto);
 
 }
