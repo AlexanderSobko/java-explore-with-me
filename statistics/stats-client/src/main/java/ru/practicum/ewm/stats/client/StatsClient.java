@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.*;
-import org.springframework.stereotype.Component;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -21,7 +20,6 @@ import java.util.Map;
 import static ru.practicum.ewm.stats.dto.RequestLogDto.DATE_FORMAT;
 
 @Validated
-@Component
 @RequiredArgsConstructor
 public class StatsClient {
 
@@ -51,7 +49,7 @@ public class StatsClient {
         params.put("start", start.format(formatter));
         params.put("end", end.format(formatter));
         params.put("unique", String.valueOf(isUnique));
-        params.put("uris", uris);
+        params.put("uris", String.join(",", uris));
         System.out.println(params);
         ResponseEntity<Object> response = client.exchange(path, HttpMethod.GET, requestEntity, Object.class, params);
         return mapper.convertValue(response.getBody(), new TypeReference<>() {
