@@ -17,6 +17,7 @@ import ru.practicum.ewm.main.service.event.EventRepository;
 import ru.practicum.ewm.main.service.event.LocationRepository;
 import ru.practicum.ewm.main.service.event.dto.*;
 import ru.practicum.ewm.main.service.event.model.Event;
+import ru.practicum.ewm.main.service.event.model.EventRequestCount;
 import ru.practicum.ewm.main.service.event.model.Location;
 import ru.practicum.ewm.main.service.exception.AlreadyExistsException;
 import ru.practicum.ewm.main.service.exception.NotFoundException;
@@ -271,7 +272,7 @@ public class EventServiceImpl implements EventService {
 
     private List<Event> setConfirmedRequestsAndViews(List<Event> events) {
         Map<Integer, Long> idsAndConfirmedRequests = requestRepo.countRequestByEventIn(events).stream()
-                .collect(Collectors.toMap((o) -> (int) o[0], (o) -> (long) o[1]));
+                .collect(Collectors.toMap(EventRequestCount::getId, EventRequestCount::getCount));
         Map<Integer, Long> idsAndViews = getViews(events);
         events.forEach(event -> {
             long count = idsAndConfirmedRequests.getOrDefault(event.getId(), 0L);
