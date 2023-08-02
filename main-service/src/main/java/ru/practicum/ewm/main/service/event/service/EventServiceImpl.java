@@ -73,7 +73,9 @@ public class EventServiceImpl implements EventService {
     public EventDto save(int userId, EventCreateDto dto) {
         User initiator = userService.getById(userId);
         Category category = categoryService.getById(dto.getCategory());
-        Location location = locationRepo.save(Location.mapToLocation(dto.getLocation()));
+        Location location = Location.mapToLocation(dto.getLocation());
+        location = locationRepo.findByLatAndLon(location.getLat(), location.getLon())
+                .orElse(locationRepo.save(location));
         Event event = Event.mapToEvent(dto);
 
         event.setCreatedOn(LocalDateTime.now().truncatedTo(SECONDS));

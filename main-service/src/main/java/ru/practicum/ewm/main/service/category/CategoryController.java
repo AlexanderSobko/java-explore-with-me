@@ -3,6 +3,7 @@ package ru.practicum.ewm.main.service.category;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewm.main.service.category.dto.CategoryDto;
 import ru.practicum.ewm.main.service.category.service.CategoryService;
@@ -12,6 +13,7 @@ import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
 
+@Validated
 @RestController
 @RequiredArgsConstructor
 public class CategoryController {

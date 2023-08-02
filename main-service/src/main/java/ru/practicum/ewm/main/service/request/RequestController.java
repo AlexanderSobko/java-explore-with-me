@@ -3,6 +3,7 @@ package ru.practicum.ewm.main.service.request;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewm.main.service.request.dto.RequestStatusUpdateDto;
 import ru.practicum.ewm.main.service.request.dto.RequestStatusResponseDto;
@@ -13,6 +14,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 import java.util.List;
 
+@Validated
 @RestController
 @RequiredArgsConstructor
 public class RequestController {
