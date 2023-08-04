@@ -21,6 +21,8 @@ import ru.practicum.ewm.main.service.event.model.EventRequestCount;
 import ru.practicum.ewm.main.service.event.model.Location;
 import ru.practicum.ewm.main.service.exception.AlreadyExistsException;
 import ru.practicum.ewm.main.service.exception.NotFoundException;
+import ru.practicum.ewm.main.service.rate.dto.RateDto;
+import ru.practicum.ewm.main.service.rate.event_rate.EventRateRepository;
 import ru.practicum.ewm.main.service.request.RequestRepository;
 import ru.practicum.ewm.main.service.user.model.User;
 import ru.practicum.ewm.main.service.user.service.UserService;
@@ -41,6 +43,7 @@ import static java.time.temporal.ChronoUnit.SECONDS;
 import static ru.practicum.ewm.main.service.event.dto.EventUpdateDto.StateAction.*;
 import static ru.practicum.ewm.main.service.event.mapper.EventMapper.mapper;
 import static ru.practicum.ewm.main.service.event.model.EventState.*;
+import static ru.practicum.ewm.main.service.rate.dto.RateDto.mapDbResultToIdAndRateDtoMap;
 
 @Slf4j
 @Service
@@ -54,6 +57,7 @@ public class EventServiceImpl implements EventService {
     LocationRepository locationRepo;
     RequestRepository requestRepo;
     StatsClient client;
+    EventRateRepository eventRateRepo;
 
     @Override
     public List<EventSimpleDto> getAllUserEvents(int userId, int from, int size) {
@@ -65,7 +69,7 @@ public class EventServiceImpl implements EventService {
         };
         User initiator = userService.getById(userId);
         List<Event> events = repo.findAllByInitiator(initiator, pageable);
-        return setConfirmedRequestsAndViews(events).stream()
+        return setConfirmedRequestsAndViewsAndRating(events).stream()
                 .map(EventSimpleDto::mapToEventSimpleDto)
                 .collect(Collectors.toList());
     }
@@ -95,7 +99,7 @@ public class EventServiceImpl implements EventService {
         User user = userService.getById(userId);
         Event event = repo.findByInitiatorAndId(user, eventId).orElseThrow(() ->
                 new NotFoundException(String.format("Событие с id(%d) не найдено или недоступно!", eventId)));
-        event = setConfirmedRequestsAndViews(List.of(event)).get(0);
+        event = setConfirmedRequestsAndViewsAndRating(List.of(event)).get(0);
         return event;
     }
 
@@ -110,7 +114,7 @@ public class EventServiceImpl implements EventService {
         }
         event = repo.save(mapper.updateEventFromDto(dto, event));
         log.info("Пользователь обновил событие! {}", event);
-        return EventDto.mapToEventDto(setConfirmedRequestsAndViews(List.of(event)).get(0));
+        return EventDto.mapToEventDto(setConfirmedRequestsAndViewsAndRating(List.of(event)).get(0));
     }
 
     @Override
@@ -121,7 +125,7 @@ public class EventServiceImpl implements EventService {
                 return params.getFrom();
             }
         };
-        return setConfirmedRequestsAndViews(repo.findAll(getSpecAllEventsAdmin(params), pageable).getContent()).stream()
+        return setConfirmedRequestsAndViewsAndRating(repo.findAll(getSpecAllEventsAdmin(params), pageable).getContent()).stream()
                 .map(EventDto::mapToEventDto)
                 .collect(Collectors.toList());
     }
@@ -142,19 +146,25 @@ public class EventServiceImpl implements EventService {
         if (dto.getCategory() != null && !event.getCategory().getId().equals(dto.getCategory())) {
             event.setCategory(categoryService.getById(dto.getCategory()));
         }
-        event = repo.save(mapper.updateEventFromDto(dto, event));
+        event = mapper.updateEventFromDto(dto, event);
+        if (dto.getEventDateTest() != null) {
+            event.setEventDate(dto.getEventDateTest());
+        }
+        event = repo.save(event);
         log.info("Событие обновлено админом! {}", event);
-        return EventDto.mapToEventDto(setConfirmedRequestsAndViews(List.of(event)).get(0));
+        return EventDto.mapToEventDto(setConfirmedRequestsAndViewsAndRating(List.of(event)).get(0));
     }
 
     @Override
     public List<EventSimpleDto> getAllPublishedEvents(GetEventsDto params) {
         Comparator<EventSimpleDto> comparator;
         validateCategories(params);
-        if (GetEventsDto.SortParam.VIEWS.equals(params.getSort())) {
+        if (SortParam.VIEWS.equals(params.getSort())) {
             comparator = Comparator.comparingLong(EventSimpleDto::getViews);
-        } else if (GetEventsDto.SortParam.EVENT_DATE.equals(params.getSort())) {
+        } else if (SortParam.EVENT_DATE.equals(params.getSort())) {
             comparator = Comparator.comparing(EventSimpleDto::getEventDate);
+        } else if (SortParam.RATING.equals(params.getSort())) {
+            comparator = Comparator.comparing(EventSimpleDto::getRating).reversed();
         } else {
             comparator = Comparator.comparingInt(EventSimpleDto::getId);
         }
@@ -164,7 +174,7 @@ public class EventServiceImpl implements EventService {
                 return params.getFrom();
             }
         };
-        List<Event> events = setConfirmedRequestsAndViews(repo.findAll(getSpecAllEvents(params), pageable).getContent());
+        List<Event> events = setConfirmedRequestsAndViewsAndRating(repo.findAll(getSpecAllEvents(params), pageable).getContent());
         if (params.isOnlyAvailable()) {
             events = events.stream()
                     .filter(event -> event.getParticipantLimit() > event.getConfirmedRequests())
@@ -180,7 +190,7 @@ public class EventServiceImpl implements EventService {
     public Event getEventById(int id) {
         Event event = repo.findById(id).orElseThrow(() ->
                 new NotFoundException(String.format("Событие с id(%d) не найдено!", id)));
-        event = setConfirmedRequestsAndViews(List.of(event)).get(0);
+        event = setConfirmedRequestsAndViewsAndRating(List.of(event)).get(0);
         return event;
     }
 
@@ -188,7 +198,7 @@ public class EventServiceImpl implements EventService {
     public EventDto getPublishedEventById(int eventId) {
         Event event = repo.findByIdAndState(eventId, PUBLISHED).orElseThrow(() ->
                 new NotFoundException(String.format("Событие с id(%d) не найдено или недоступно!", eventId)));
-        event = setConfirmedRequestsAndViews(List.of(event)).get(0);
+        event = setConfirmedRequestsAndViewsAndRating(List.of(event)).get(0);
         return EventDto.mapToEventDto(event);
     }
 
@@ -270,19 +280,25 @@ public class EventServiceImpl implements EventService {
                 new NotFoundException(String.format("Событие с id(%d) не найдено!", eventId)));
     }
 
-    private List<Event> setConfirmedRequestsAndViews(List<Event> events) {
+    private List<Event> setConfirmedRequestsAndViewsAndRating(List<Event> events) {
         Map<Integer, Long> idsAndConfirmedRequests = requestRepo.countRequestByEventIn(events).stream()
                 .collect(Collectors.toMap(EventRequestCount::getId, EventRequestCount::getCount));
         Map<Integer, Long> idsAndViews = getViews(events);
+        Map<Integer, RateDto> idsAndRating = mapDbResultToIdAndRateDtoMap(
+                eventRateRepo.getRatesByEventsIn(events));
         events.forEach(event -> {
             long count = idsAndConfirmedRequests.getOrDefault(event.getId(), 0L);
             event.setConfirmedRequests((int) count);
             event.setViews(idsAndViews.getOrDefault(event.getId(), 0L));
+            event.setRate(idsAndRating.getOrDefault(event.getId(), new RateDto()));
         });
         return events;
     }
 
     private Map<Integer, Long> getViews(List<Event> events) {
+        if (events.isEmpty()) {
+            return Map.of();
+        }
         List<String> uris = events.stream()
                 .map(event -> String.format("/events/%d", event.getId())).collect(Collectors.toList());
         List<StatsDto> stats = client.getStats(

@@ -114,6 +114,11 @@ public class RequestServiceImpl implements RequestService {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public boolean existByByRequesterAndEventAndStatus(User requester, Event event, RequestStatus status) {
+        return repo.existsByRequesterAndEventAndRequestStatus(requester, event, status);
+    }
+
     private void validateRequestExistsOrUserIsInitiator(User requester, Event event) {
         if (repo.existsByRequesterAndEvent(requester, event)) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Нельзя добавить повторный запрос!");

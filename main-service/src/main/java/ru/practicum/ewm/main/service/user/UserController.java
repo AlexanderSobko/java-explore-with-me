@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.ewm.main.service.event.dto.SortParam;
 import ru.practicum.ewm.main.service.user.dto.UserDto;
 import ru.practicum.ewm.main.service.user.service.UserService;
 
@@ -24,8 +25,9 @@ public class UserController {
     @GetMapping
     public ResponseEntity<List<UserDto>> getAllUsers(@RequestParam(required = false) List<Integer> ids,
                                                      @RequestParam(defaultValue = "0") @PositiveOrZero int from,
-                                                     @RequestParam(defaultValue = "10") @Positive int size) {
-        return ResponseEntity.ok(service.getAll(ids, from, size));
+                                                     @RequestParam(defaultValue = "10") @Positive int size,
+                                                     @RequestParam(required = false) SortParam sortParam) {
+        return ResponseEntity.ok(service.getAll(ids, from, size, sortParam));
     }
 
     @PostMapping

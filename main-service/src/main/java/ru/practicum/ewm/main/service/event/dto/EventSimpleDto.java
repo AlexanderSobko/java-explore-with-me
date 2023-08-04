@@ -28,6 +28,7 @@ public class EventSimpleDto {
     boolean paid;
     String title;
     long views;
+    long rating;
 
     public static EventSimpleDto mapToEventSimpleDto(Event event) {
         return EventSimpleDto.builder()
@@ -40,6 +41,7 @@ public class EventSimpleDto {
                 .views(event.getViews())
                 .paid(event.isPaid())
                 .title(event.getTitle())
+                .rating(event.getRating())
                 .build();
     }
 

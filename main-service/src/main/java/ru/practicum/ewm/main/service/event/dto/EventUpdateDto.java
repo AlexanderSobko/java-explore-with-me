@@ -29,6 +29,8 @@ public class EventUpdateDto {
     @JsonFormat(pattern = DATE_FORMAT)
     @DateAfterHoursOrNull(hours = 2, message = DATE_AFTER_HOURS_MESSAGE)
     LocalDateTime eventDate;
+    @JsonFormat(pattern = DATE_FORMAT)
+    LocalDateTime eventDateTest;
     Integer category;
     LocationDto location;
     Boolean paid;

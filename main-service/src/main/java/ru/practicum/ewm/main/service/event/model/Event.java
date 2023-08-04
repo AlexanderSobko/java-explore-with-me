@@ -4,6 +4,7 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 import ru.practicum.ewm.main.service.category.model.Category;
 import ru.practicum.ewm.main.service.event.dto.EventCreateDto;
+import ru.practicum.ewm.main.service.rate.dto.RateDto;
 import ru.practicum.ewm.main.service.user.model.User;
 
 import javax.persistence.*;
@@ -56,6 +57,12 @@ public class Event {
     long views;
     @Transient
     int confirmedRequests;
+    @Transient
+    RateDto rate;
+
+    public long getRating() {
+        return rate.getLikes() - rate.getDislikes();
+    }
 
     public static Event mapToEvent(EventCreateDto dto) {
         return Event.builder()

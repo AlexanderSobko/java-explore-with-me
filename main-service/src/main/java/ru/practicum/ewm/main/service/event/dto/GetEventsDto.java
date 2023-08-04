@@ -30,10 +30,4 @@ public class GetEventsDto {
     int from = 0;
     int size = 10;
 
-    public enum SortParam {
-
-        EVENT_DATE, VIEWS
-
-    }
-
 }

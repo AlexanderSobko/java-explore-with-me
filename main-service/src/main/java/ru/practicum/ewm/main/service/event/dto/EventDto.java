@@ -5,6 +5,7 @@ import lombok.*;
 import ru.practicum.ewm.main.service.category.dto.CategoryDto;
 import ru.practicum.ewm.main.service.event.model.Event;
 import ru.practicum.ewm.main.service.event.model.EventState;
+import ru.practicum.ewm.main.service.rate.dto.RateDto;
 import ru.practicum.ewm.main.service.user.dto.UserSimpleDto;
 import lombok.experimental.FieldDefaults;
 
@@ -38,6 +39,9 @@ public class EventDto {
     EventState state;
     String title;
     long views;
+    RateDto rate;
+
+
 
     public static EventDto mapToEventDto(Event event) {
         return EventDto.builder()
@@ -57,6 +61,7 @@ public class EventDto {
                 .confirmedRequests(event.getConfirmedRequests())
                 .views(event.getViews())
                 .paid(event.isPaid())
+                .rate(event.getRate())
                 .build();
     }
 
