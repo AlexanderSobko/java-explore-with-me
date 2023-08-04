@@ -202,6 +202,11 @@ public class EventServiceImpl implements EventService {
         return EventDto.mapToEventDto(event);
     }
 
+    @Override
+    public List<Event> findAllById(List<Integer> events) {
+        return setConfirmedRequestsAndViewsAndRating(repo.findAllById(events));
+    }
+
     private void validateCategories(GetEventsDto params) {
         if (params.getCategories().stream().anyMatch(category -> category <= 0)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Значение id категорий должно быть положительным!");
@@ -292,6 +297,14 @@ public class EventServiceImpl implements EventService {
             event.setViews(idsAndViews.getOrDefault(event.getId(), 0L));
             event.setRate(idsAndRating.getOrDefault(event.getId(), new RateDto()));
         });
+        return events;
+    }
+
+    @Override
+    public List<Event> setRates(List<Event> events) {
+        Map<Integer, RateDto> idsAndRating = mapDbResultToIdAndRateDtoMap(
+                eventRateRepo.getRatesByEventsIn(events));
+        events.forEach(event -> event.setRate(idsAndRating.getOrDefault(event.getId(), new RateDto())));
         return events;
     }
 

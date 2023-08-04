@@ -34,6 +34,7 @@ public class RateController {
     }
 
     @DeleteMapping("/user/{userId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public ResponseEntity<Void> deleteUserRate(@PathVariable @Positive int fanId,
                                                @PathVariable @Positive int userId) {
         service.deleteUserRate(fanId, userId);
@@ -60,6 +61,29 @@ public class RateController {
     public ResponseEntity<Void> deleteEventRate(@PathVariable @Positive int fanId,
                                                 @PathVariable @Positive int eventId) {
         service.deleteEventRate(fanId, eventId);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
+    @PostMapping("/compilation/{compId}")
+    public ResponseEntity<Void> rateCompilation(@PathVariable @Positive int fanId,
+                                                @PathVariable @Positive int compId,
+                                                @RequestParam boolean isLike) {
+        service.rateCompilation(isLike, fanId, compId);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
+    @PatchMapping("/compilation/{compId}")
+    public ResponseEntity<Void> updateCompilationRate(@PathVariable @Positive int fanId,
+                                                      @PathVariable @Positive int compId,
+                                                      @RequestParam boolean isLike) {
+        service.updateCompilationRate(isLike, fanId, compId);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
+    @DeleteMapping("/compilation/{compId}")
+    public ResponseEntity<Void> deleteCompilationRate(@PathVariable @Positive int fanId,
+                                                      @PathVariable @Positive int compId) {
+        service.deleteCompilationRate(fanId, compId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 

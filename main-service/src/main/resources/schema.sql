@@ -51,3 +51,21 @@ CREATE TABLE IF NOT EXISTS compilations_events (
     event_id INT REFERENCES events (id) ON DELETE CASCADE,
     PRIMARY KEY (compilation_id, event_id)
 );
+
+CREATE TABLE IF NOT EXISTS compilation_rates (
+    compilation_id INT REFERENCES compilations (id) ON DELETE CASCADE,
+    fan_id INT REFERENCES users (id) ON DELETE CASCADE,
+    PRIMARY KEY (compilation_id, fan_id)
+);
+
+CREATE TABLE IF NOT EXISTS event_rates (
+    event_id INT REFERENCES events (id) ON DELETE CASCADE,
+    fan_id INT REFERENCES users (id) ON DELETE CASCADE,
+    PRIMARY KEY (event_id, fan_id)
+);
+
+CREATE TABLE IF NOT EXISTS user_rates (
+    user_id INT REFERENCES users (id) ON DELETE CASCADE,
+    fan_id INT REFERENCES users (id) ON DELETE CASCADE,
+    PRIMARY KEY (user_id, fan_id)
+);

@@ -7,8 +7,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+import ru.practicum.ewm.main.service.compilation.service.CompilationService;
 import ru.practicum.ewm.main.service.event.service.EventService;
 import ru.practicum.ewm.main.service.exception.NotFoundException;
+import ru.practicum.ewm.main.service.rate.compilation_rate.CompilationRate;
+import ru.practicum.ewm.main.service.rate.compilation_rate.CompilationRateIdClass;
+import ru.practicum.ewm.main.service.rate.compilation_rate.CompilationRateRepository;
 import ru.practicum.ewm.main.service.rate.event_rate.EventRate;
 import ru.practicum.ewm.main.service.rate.event_rate.EventRateIdClass;
 import ru.practicum.ewm.main.service.rate.event_rate.EventRateRepository;
@@ -31,9 +35,11 @@ public class RateServiceImp implements RateService {
 
     UserRateRepository userRateRepo;
     EventRateRepository eventRateRepo;
+    CompilationRateRepository compilationRateRepo;
     UserService userService;
     EventService eventService;
     RequestService requestService;
+    CompilationService compilationService;
 
     @Override
     public void rateUser(boolean isLike, int fanId, int userId) {
@@ -120,6 +126,45 @@ public class RateServiceImp implements RateService {
         return EventRateIdClass.builder()
                 .fan(userService.getById(fanId))
                 .event(eventService.getEventById(eventId))
+                .build();
+    }
+
+    @Override
+    public void rateCompilation(boolean isLike, int fanId, int compId) {
+        CompilationRateIdClass idClass = getCompilationRateIdClass(fanId, compId);
+        CompilationRate compilationRate = compilationRateRepo.save(CompilationRate.builder()
+                .idClass(idClass)
+                .isLike(isLike)
+                .build());
+        log.info("Оценка к подборке событий с id({}) сохранена! {}", compId, compilationRate);
+    }
+
+    @Override
+    public void updateCompilationRate(boolean isLike, int fanId, int compId) {
+        CompilationRate compilationRate = getCompilationRate(fanId, compId);
+        compilationRate.setLike(isLike);
+        compilationRate = compilationRateRepo.save(compilationRate);
+        log.info("Оценка к подборке событий с id({}) изменена! {}", compId, compilationRate);
+    }
+
+    @Override
+    public void deleteCompilationRate(int fanId, int compId) {
+        CompilationRate compilationRate = getCompilationRate(fanId, compId);
+        compilationRateRepo.delete(compilationRate);
+        log.info("Оценка к подборке событий с id({}) удалена! {}", compId, compilationRate);
+    }
+
+    private CompilationRate getCompilationRate(int fanId, int compId) {
+        CompilationRateIdClass idClass = getCompilationRateIdClass(fanId, compId);
+        return compilationRateRepo.findById(idClass).orElseThrow(() ->
+                new NotFoundException(String.format(
+                        "Пользователь с id(%d) не оценивал подборку событий с id(%d)!", fanId, compId)));
+    }
+
+    private CompilationRateIdClass getCompilationRateIdClass(int fanId, int compId) {
+        return CompilationRateIdClass.builder()
+                .fan(userService.getById(fanId))
+                .compilation(compilationService.getCompilationById(compId))
                 .build();
     }
 

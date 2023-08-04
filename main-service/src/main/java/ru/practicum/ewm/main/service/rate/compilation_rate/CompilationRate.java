@@ -1,4 +1,4 @@
-package ru.practicum.ewm.main.service.rate.event_rate;
+package ru.practicum.ewm.main.service.rate.compilation_rate;
 
 import lombok.*;
 
@@ -13,11 +13,11 @@ import javax.persistence.Table;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "event_rates")
-public class EventRate {
+@Table(name = "compilation_rates")
+public class CompilationRate {
 
     @EmbeddedId
-    EventRateIdClass idClass;
+    CompilationRateIdClass idClass;
     boolean isLike;
 
 }

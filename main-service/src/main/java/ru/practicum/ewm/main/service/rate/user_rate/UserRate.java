@@ -11,7 +11,7 @@ import javax.persistence.*;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-@Table( name = "user_rates")
+@Table(name = "user_rates")
 public class UserRate {
 
     @EmbeddedId

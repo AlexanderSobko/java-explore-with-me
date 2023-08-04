@@ -12,6 +12,12 @@ public interface RateService {
 
     void deleteEventRate(int fanId, int eventId);
 
+    void rateCompilation(boolean isLike, int fanId, int compId);
+
+    void deleteCompilationRate(int fanId, int compId);
+
     void updateUserRate(boolean isLike, int fanId, int userId);
+
+    void updateCompilationRate(boolean isLike, int fanId, int compId);
 
 }

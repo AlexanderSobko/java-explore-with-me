@@ -9,6 +9,7 @@ import ru.practicum.ewm.main.service.compilation.dto.CompilationCreateDto;
 import ru.practicum.ewm.main.service.compilation.dto.CompilationDto;
 import ru.practicum.ewm.main.service.compilation.dto.CompilationUpdateDto;
 import ru.practicum.ewm.main.service.compilation.service.CompilationService;
+import ru.practicum.ewm.main.service.event.dto.SortParam;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
@@ -26,8 +27,9 @@ public class CompilationController {
     public ResponseEntity<List<CompilationDto>> getAllCompilations(
             @RequestParam(defaultValue = "false") boolean pinned,
             @RequestParam(defaultValue = "0") @PositiveOrZero int from,
-            @RequestParam(defaultValue = "10") @Positive int size) {
-        return ResponseEntity.ok(compilationService.getAllCompilations(pinned, from, size));
+            @RequestParam(defaultValue = "10") @Positive int size,
+            @RequestParam(required = false) SortParam sortParam) {
+        return ResponseEntity.ok(compilationService.getAllCompilations(pinned, from, size, sortParam));
     }
 
     @GetMapping("/compilations/{compId}")

@@ -24,4 +24,9 @@ public interface EventService {
     Event getEventById(int id);
 
     EventDto getPublishedEventById(int eventId);
+
+    List<Event> findAllById(List<Integer> events);
+
+    List<Event> setRates(List<Event> events);
+
 }

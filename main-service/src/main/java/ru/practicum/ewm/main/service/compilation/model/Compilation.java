@@ -7,6 +7,7 @@ import lombok.ToString;
 import lombok.experimental.FieldDefaults;
 import ru.practicum.ewm.main.service.compilation.dto.CompilationCreateDto;
 import ru.practicum.ewm.main.service.event.model.Event;
+import ru.practicum.ewm.main.service.rate.dto.RateDto;
 
 import javax.persistence.*;
 import java.util.List;
@@ -33,6 +34,12 @@ public class Compilation {
             inverseJoinColumns = {@JoinColumn(name = "event_id")}
     )
     List<Event> events;
+    @Transient
+    RateDto rate;
+
+    public long getRating() {
+        return rate.getLikes() - rate.getDislikes();
+    }
 
     public static Compilation mapToCompilation(CompilationCreateDto dto) {
         Compilation compilation = new Compilation();
