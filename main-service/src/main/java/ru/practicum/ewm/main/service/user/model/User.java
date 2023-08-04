@@ -6,6 +6,7 @@ import ru.practicum.ewm.main.service.rate.dto.RateDto;
 import ru.practicum.ewm.main.service.user.dto.UserDto;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 @Entity
 @Getter
@@ -16,7 +17,7 @@ import javax.persistence.*;
 @AllArgsConstructor
 @Table(name = "users")
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class User {
+public class User implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
