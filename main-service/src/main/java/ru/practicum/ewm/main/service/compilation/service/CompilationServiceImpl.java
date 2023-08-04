@@ -48,7 +48,7 @@ public class CompilationServiceImpl implements CompilationService {
         };
         Comparator<Compilation> comparator = Comparator.comparingLong(Compilation::getRating);
         if (RATING.equals(sortParam)) {
-            comparator = Comparator.comparingLong(Compilation::getRating);
+            comparator = Comparator.comparingLong(Compilation::getRating).reversed();
         }
         List<Compilation> compilations = setRates(repo.findAllByPinned(pinned, pageable));
         compilations.forEach(compilation -> compilation.setEvents(eventService.setRates(compilation.getEvents())));
@@ -62,7 +62,9 @@ public class CompilationServiceImpl implements CompilationService {
     public Compilation getCompilationById(int compId) {
         Compilation compilation = repo.findById(compId).orElseThrow(() ->
                 new NotFoundException(String.format("Подборка с id(%d) не найдена или недоступна", compId)));
-        return setRates(List.of(repo.save(compilation))).get(0);
+        compilation = setRates(List.of(repo.save(compilation))).get(0);
+        compilation.setEvents(eventService.setRates(compilation.getEvents()));
+        return compilation;
     }
 
     @Override
