@@ -2,7 +2,7 @@
 	"info": {
 		"_postman_id": "e0d4af22-b3d0-4484-b3cd-3991562e7a90",
 		"name": "Tests for rateing events featur",
-		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "18956416"
 	},
 	"item": [
@@ -1973,8 +1973,8 @@
 											"        const event = await api.addEvent(user.id, rnd.getEvent(category.id));\r",
 											"        let compilation = rnd.getCompilation(event.id);\r",
 											"        compilation = await api.addCompilation(compilation);\r",
+											"        pm.collectionVariables.set('compId', compilation.id);\r",
 											"        pm.collectionVariables.set('fid', user.id);\r",
-											"        pm.collectionVariables.set('cid', compilation.id);\r",
 											"    } catch(err) {\r",
 											"        console.error(\"Ошибка при подготовке тестовых данных.\", err);\r",
 											"    }\r",
@@ -2015,7 +2015,7 @@
 								"method": "POST",
 								"header": [],
 								"url": {
-									"raw": "{{baseUrl}}/rates/:fanId/compilation/:compId",
+									"raw": "{{baseUrl}}/rates/:fanId/compilation/:compilationId",
 									"host": [
 										"{{baseUrl}}"
 									],
@@ -2023,7 +2023,7 @@
 										"rates",
 										":fanId",
 										"compilation",
-										":compId"
+										":compilationId"
 									],
 									"query": [
 										{
@@ -2038,8 +2038,8 @@
 											"value": "{{fid}}"
 										},
 										{
-											"key": "compId",
-											"value": "{{сid}}"
+											"key": "compilationId",
+											"value": "{{compId}}"
 										}
 									]
 								}
