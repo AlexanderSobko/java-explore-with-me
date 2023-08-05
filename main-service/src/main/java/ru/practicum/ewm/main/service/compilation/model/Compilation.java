@@ -10,6 +10,7 @@ import ru.practicum.ewm.main.service.event.model.Event;
 import ru.practicum.ewm.main.service.rate.dto.RateDto;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.List;
 
 @Entity
@@ -18,7 +19,7 @@ import java.util.List;
 @ToString
 @Table(name = "compilations")
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class Compilation {
+public class Compilation implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

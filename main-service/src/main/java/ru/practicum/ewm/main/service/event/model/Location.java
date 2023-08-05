@@ -5,6 +5,7 @@ import lombok.experimental.FieldDefaults;
 import ru.practicum.ewm.main.service.event.dto.LocationDto;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 @Entity
 @Getter
@@ -15,7 +16,7 @@ import javax.persistence.*;
 @AllArgsConstructor
 @Table(name = "locations")
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class Location {
+public class Location implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

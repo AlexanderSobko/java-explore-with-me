@@ -8,6 +8,7 @@ import ru.practicum.ewm.main.service.rate.dto.RateDto;
 import ru.practicum.ewm.main.service.user.model.User;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Entity
@@ -19,7 +20,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Table(name = "events")
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class Event {
+public class Event implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
