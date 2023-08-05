@@ -3,6 +3,7 @@ package ru.practicum.ewm.main.service.rate.dto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -12,7 +13,7 @@ import java.util.stream.Collectors;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-public class RateDto {
+public class RateDto implements Serializable {
 
     @JsonIgnore
     int id;
