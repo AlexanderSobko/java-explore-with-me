@@ -2,25 +2,31 @@ package ru.practicum.ewm.main.service.event.mapper;
 
 import org.mapstruct.*;
 import org.mapstruct.factory.Mappers;
+import ru.practicum.ewm.main.service.category.mapper.CategoryMapper;
+import ru.practicum.ewm.main.service.event.dto.EventCreateDto;
+import ru.practicum.ewm.main.service.event.dto.EventDto;
+import ru.practicum.ewm.main.service.event.dto.EventSimpleDto;
 import ru.practicum.ewm.main.service.event.dto.EventUpdateDto;
 import ru.practicum.ewm.main.service.event.model.Event;
+import ru.practicum.ewm.main.service.user.mapper.UserMapper;
 
-@Mapper
+@Mapper(uses = {LocationMapper.class, UserMapper.class, CategoryMapper.class},
+        unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface EventMapper {
 
-    EventMapper mapper = Mappers.getMapper(EventMapper.class);
+    EventMapper EVENT_MAPPER = Mappers.getMapper(EventMapper.class);
 
-    @Mapping(target = "id", ignore = true)
     @Mapping(target = "category", ignore = true)
-    @Mapping(target = "createdOn", ignore = true)
-    @Mapping(target = "publishedOn", ignore = true)
-    @Mapping(target = "state", ignore = true)
-    @Mapping(target = "initiator", ignore = true)
-    @Mapping(target = "views", ignore = true)
-    @Mapping(target = "confirmedRequests", ignore = true)
-    @Mapping(target = "rate", ignore = true)
-    @Mapping(target = "location.id", ignore = true)
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    Event updateEventFromDto(EventUpdateDto dto, @MappingTarget Event entity);
+    Event mapToEvent(EventUpdateDto dto, @MappingTarget Event entity);
+
+    @Mapping(target = "category", ignore = true)
+    Event mapToEvent(EventCreateDto dto);
+
+    @Mapping(target = "rating", expression = "java(event.getLikes() - event.getDislikes())")
+    EventDto mapToEventDto(Event event);
+
+    @Mapping(target = "rating", expression = "java(event.getLikes() - event.getDislikes())")
+    EventSimpleDto mapToEventSimpleDto(Event event);
 
 }

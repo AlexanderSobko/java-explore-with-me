@@ -14,29 +14,35 @@ import ru.practicum.ewm.main.service.compilation.dto.CompilationDto;
 import ru.practicum.ewm.main.service.compilation.dto.CompilationUpdateDto;
 import ru.practicum.ewm.main.service.compilation.model.Compilation;
 import ru.practicum.ewm.main.service.event.dto.SortParam;
-import ru.practicum.ewm.main.service.event.service.EventService;
+import ru.practicum.ewm.main.service.event.model.Event;
+import ru.practicum.ewm.main.service.event.service.EventFindService;
 import ru.practicum.ewm.main.service.exception.NotFoundException;
 import ru.practicum.ewm.main.service.rate.compilation_rate.CompilationRateRepository;
-import ru.practicum.ewm.main.service.rate.dto.RateDto;
+import ru.practicum.ewm.main.service.rate.dto.Rate;
+import ru.practicum.ewm.main.service.rate.event_rate.EventRateRepository;
 
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static ru.practicum.ewm.main.service.compilation.mapper.CompilationMapper.COMPILATION_MAPPER;
 import static ru.practicum.ewm.main.service.event.dto.SortParam.RATING;
-import static ru.practicum.ewm.main.service.rate.dto.RateDto.mapDbResultToIdAndRateDtoMap;
+import static ru.practicum.ewm.main.service.rate.dto.Rate.mapDbResultToIdAndRateDtoMap;
 
 @Slf4j
 @Service
+@Transactional
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class CompilationServiceImpl implements CompilationService {
 
-    EventService eventService;
+    EventFindService eventFindService;
     CompilationRepository repo;
     CompilationRateRepository compilationRateRepo;
+    EventRateRepository eventRateRepo;
 
     @Override
     public List<CompilationDto> getAllCompilations(boolean pinned, int from, int size, SortParam sortParam) {
@@ -46,15 +52,13 @@ public class CompilationServiceImpl implements CompilationService {
                 return from;
             }
         };
-        Comparator<Compilation> comparator = Comparator.comparingLong(Compilation::getRating);
-        if (RATING.equals(sortParam)) {
-            comparator = Comparator.comparingLong(Compilation::getRating).reversed();
-        }
+        Comparator<CompilationDto> comparator = RATING.equals(sortParam) ?
+                Comparator.comparingLong(CompilationDto::getRating).reversed()
+                : Comparator.comparingLong(CompilationDto::getId);
         List<Compilation> compilations = setRates(repo.findAllByPinned(pinned, pageable));
-        compilations.forEach(compilation -> compilation.setEvents(eventService.setRates(compilation.getEvents())));
         return compilations.stream()
+                .map(COMPILATION_MAPPER::mapToCompilationDto)
                 .sorted(comparator)
-                .map(CompilationDto::mapToCompilationDto)
                 .collect(Collectors.toList());
     }
 
@@ -63,7 +67,6 @@ public class CompilationServiceImpl implements CompilationService {
         Compilation compilation = repo.findById(compId).orElseThrow(() ->
                 new NotFoundException(String.format("Подборка с id(%d) не найдена или недоступна", compId)));
         compilation = setRates(List.of(repo.save(compilation))).get(0);
-        compilation.setEvents(eventService.setRates(compilation.getEvents()));
         return compilation;
     }
 
@@ -71,11 +74,10 @@ public class CompilationServiceImpl implements CompilationService {
     public CompilationDto saveCompilation(CompilationCreateDto dto) {
         Compilation compilation = Compilation.mapToCompilation(dto);
         compilation.setEvents(dto.getEvents() == null ?
-                new ArrayList<>() : eventService.findAllById(dto.getEvents()));
+                new ArrayList<>() : eventFindService.findAllById(dto.getEvents()));
         compilation = repo.save(compilation);
-        compilation.setRate(new RateDto());
         log.info("Подборка добавлена! {}", compilation);
-        return CompilationDto.mapToCompilationDto(compilation);
+        return COMPILATION_MAPPER.mapToCompilationDto(compilation);
     }
 
     @Override
@@ -95,18 +97,32 @@ public class CompilationServiceImpl implements CompilationService {
             compilation.setPinned(dto.getPinned());
         }
         if (dto.getEvents() != null) {
-            compilation.setEvents(eventService.findAllById(dto.getEvents()));
+            compilation.setEvents(eventFindService.findAllById(dto.getEvents()));
         }
         compilation = setRates(List.of(repo.save(compilation))).get(0);
         log.info("Подборка обновлена! {}", compilation);
-        return CompilationDto.mapToCompilationDto(compilation);
+        return COMPILATION_MAPPER.mapToCompilationDto(compilation);
     }
 
     private List<Compilation> setRates(List<Compilation> compilations) {
-        Map<Integer, RateDto> rates = mapDbResultToIdAndRateDtoMap(
+        Map<Integer, Rate> rates = mapDbResultToIdAndRateDtoMap(
                 compilationRateRepo.getRatesByCompilationsIn(compilations));
-        compilations.forEach(compilation ->
-                compilation.setRate(rates.getOrDefault(compilation.getId(), new RateDto())));
+        List<Event> events = compilations.stream()
+                .flatMap(compilation -> compilation.getEvents().stream())
+                .collect(Collectors.toList());
+        Map<Integer, Rate> eventIdsAndRating = mapDbResultToIdAndRateDtoMap(
+                eventRateRepo.getRatesByEventsIn(events));
+        compilations.forEach(compilation -> {
+            Rate rate = rates.getOrDefault(compilation.getId(), new Rate());
+            compilation.setLikes(rate.getLikes());
+            compilation.setDislikes(rate.getDislikes());
+            compilation.getEvents().forEach(event -> {
+                Rate eventRate = eventIdsAndRating.getOrDefault(event.getId(), new Rate());
+                event.setLikes(eventRate.getLikes());
+                event.setDislikes(eventRate.getDislikes());
+            });
+        });
+
         return compilations;
     }
 

@@ -16,6 +16,8 @@ import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
 
+import static ru.practicum.ewm.main.service.compilation.mapper.CompilationMapper.COMPILATION_MAPPER;
+
 @Validated
 @RestController
 @RequiredArgsConstructor
@@ -34,7 +36,7 @@ public class CompilationController {
 
     @GetMapping("/compilations/{compId}")
     public ResponseEntity<CompilationDto> getCompilationById(@PathVariable @Positive int compId) {
-        return ResponseEntity.ok(CompilationDto.mapToCompilationDto(compilationService.getCompilationById(compId)));
+        return ResponseEntity.ok(COMPILATION_MAPPER.mapToCompilationDto(compilationService.getCompilationById(compId)));
     }
 
     @PostMapping("/admin/compilations")

@@ -2,7 +2,6 @@ package ru.practicum.ewm.main.service.user.model;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import ru.practicum.ewm.main.service.rate.dto.RateDto;
 import ru.practicum.ewm.main.service.user.dto.UserDto;
 
 import javax.persistence.*;
@@ -27,13 +26,11 @@ public class User implements Serializable {
     @Column(unique = true, nullable = false)
     String email;
     @Transient
-    RateDto rate;
+    long likes;
+    @Transient
+    long dislikes;
     @Transient
     Long privateRating;
-
-    public long getRating() {
-        return rate.getLikes() - rate.getDislikes();
-    }
 
     public static User mapToUser(UserDto dto) {
         return User.builder()

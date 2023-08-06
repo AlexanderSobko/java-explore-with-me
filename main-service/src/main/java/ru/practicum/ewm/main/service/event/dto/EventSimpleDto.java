@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import ru.practicum.ewm.main.service.category.dto.CategoryDto;
-import ru.practicum.ewm.main.service.event.model.Event;
 import ru.practicum.ewm.main.service.user.dto.UserSimpleDto;
 
 import java.time.LocalDateTime;
@@ -29,20 +28,5 @@ public class EventSimpleDto {
     String title;
     long views;
     long rating;
-
-    public static EventSimpleDto mapToEventSimpleDto(Event event) {
-        return EventSimpleDto.builder()
-                .id(event.getId())
-                .annotation(event.getAnnotation())
-                .category(CategoryDto.mapToCategoryDto(event.getCategory()))
-                .eventDate(event.getEventDate())
-                .initiator(UserSimpleDto.mapToUserSimpleDto(event.getInitiator()))
-                .confirmedRequests(event.getConfirmedRequests())
-                .views(event.getViews())
-                .paid(event.isPaid())
-                .title(event.getTitle())
-                .rating(event.getRating())
-                .build();
-    }
 
 }

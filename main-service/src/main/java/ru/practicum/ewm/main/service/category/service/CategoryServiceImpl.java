@@ -5,19 +5,23 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Service;
+import ru.practicum.ewm.main.service.category.CategoryRepository;
 import ru.practicum.ewm.main.service.category.dto.CategoryDto;
+import ru.practicum.ewm.main.service.category.model.Category;
 import ru.practicum.ewm.main.service.event.EventRepository;
 import ru.practicum.ewm.main.service.exception.AlreadyExistsException;
 import ru.practicum.ewm.main.service.exception.NotFoundException;
-import ru.practicum.ewm.main.service.category.model.Category;
-import ru.practicum.ewm.main.service.category.CategoryRepository;
-import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static ru.practicum.ewm.main.service.category.mapper.CategoryMapper.CATEGORY_MAPPER;
+
 @Slf4j
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class CategoryServiceImpl implements CategoryService {
 
@@ -30,7 +34,7 @@ public class CategoryServiceImpl implements CategoryService {
         Category category = Category.mapToCategory(dto);
         category = repo.save(category);
         log.info("Категория добавлена! {}", category);
-        return CategoryDto.mapToCategoryDto(category);
+        return CATEGORY_MAPPER.mapToCategoryDto(category);
     }
 
     @Override
@@ -52,7 +56,7 @@ public class CategoryServiceImpl implements CategoryService {
             category = repo.save(category);
             log.info("Данные категории изменены! {}", category);
         }
-        return CategoryDto.mapToCategoryDto(category);
+        return CATEGORY_MAPPER.mapToCategoryDto(category);
     }
 
     @Override
@@ -64,7 +68,7 @@ public class CategoryServiceImpl implements CategoryService {
             }
         };
         return repo.findAll(pageable).stream()
-                .map(CategoryDto::mapToCategoryDto)
+                .map(CATEGORY_MAPPER::mapToCategoryDto)
                 .collect(Collectors.toList());
     }
 

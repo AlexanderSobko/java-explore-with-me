@@ -1,4 +1,4 @@
-package ru.practicum.ewm.main.service.rate.user_rate;
+package ru.practicum.ewm.main.service.rate.user_rate.model;
 
 import lombok.*;
 import ru.practicum.ewm.main.service.user.model.User;

@@ -2,12 +2,9 @@ package ru.practicum.ewm.main.service.compilation.dto;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import ru.practicum.ewm.main.service.compilation.model.Compilation;
 import ru.practicum.ewm.main.service.event.dto.EventSimpleDto;
-import ru.practicum.ewm.main.service.rate.dto.RateDto;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Setter
 @Getter
@@ -20,18 +17,8 @@ public class CompilationDto {
     String title;
     boolean pinned;
     List<EventSimpleDto> events;
-    RateDto rate;
-
-    public static CompilationDto mapToCompilationDto(Compilation compilation) {
-        return CompilationDto.builder()
-                .id(compilation.getId())
-                .title(compilation.getTitle())
-                .pinned(compilation.isPinned())
-                .events(compilation.getEvents().stream()
-                        .map(EventSimpleDto::mapToEventSimpleDto)
-                        .collect(Collectors.toList()))
-                .rate(compilation.getRate())
-                .build();
-    }
+    long likes;
+    long dislikes;
+    long rating;
 
 }

@@ -1,7 +1,7 @@
-package ru.practicum.ewm.main.service.rate.compilation_rate;
+package ru.practicum.ewm.main.service.rate.event_rate.model;
 
 import lombok.*;
-import ru.practicum.ewm.main.service.compilation.model.Compilation;
+import ru.practicum.ewm.main.service.event.model.Event;
 import ru.practicum.ewm.main.service.user.model.User;
 
 import javax.persistence.Embeddable;
@@ -16,13 +16,13 @@ import java.io.Serializable;
 @Embeddable
 @NoArgsConstructor
 @AllArgsConstructor
-public class CompilationRateIdClass implements Serializable {
+public class EventRateIdClass implements Serializable {
 
     @ManyToOne
     @JoinColumn(name = "fan_id", nullable = false)
     private User fan;
     @ManyToOne
-    @JoinColumn(name = "compilation_id", nullable = false)
-    private Compilation compilation;
+    @JoinColumn(name = "event_id", nullable = false)
+    private Event event;
 
 }

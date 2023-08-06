@@ -7,7 +7,6 @@ import lombok.ToString;
 import lombok.experimental.FieldDefaults;
 import ru.practicum.ewm.main.service.compilation.dto.CompilationCreateDto;
 import ru.practicum.ewm.main.service.event.model.Event;
-import ru.practicum.ewm.main.service.rate.dto.RateDto;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -36,11 +35,9 @@ public class Compilation implements Serializable {
     )
     List<Event> events;
     @Transient
-    RateDto rate;
-
-    public long getRating() {
-        return rate.getLikes() - rate.getDislikes();
-    }
+    long likes;
+    @Transient
+    long dislikes;
 
     public static Compilation mapToCompilation(CompilationCreateDto dto) {
         Compilation compilation = new Compilation();

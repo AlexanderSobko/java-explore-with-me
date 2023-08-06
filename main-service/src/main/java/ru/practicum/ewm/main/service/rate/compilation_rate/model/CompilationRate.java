@@ -1,4 +1,4 @@
-package ru.practicum.ewm.main.service.rate.compilation_rate;
+package ru.practicum.ewm.main.service.rate.compilation_rate.model;
 
 import lombok.*;
 

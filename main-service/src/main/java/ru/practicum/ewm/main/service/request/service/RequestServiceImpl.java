@@ -20,6 +20,7 @@ import ru.practicum.ewm.main.service.request.model.RequestStatus;
 import ru.practicum.ewm.main.service.user.model.User;
 import ru.practicum.ewm.main.service.user.service.UserService;
 
+import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
@@ -27,6 +28,7 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Service
+@Transactional
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class RequestServiceImpl implements RequestService {

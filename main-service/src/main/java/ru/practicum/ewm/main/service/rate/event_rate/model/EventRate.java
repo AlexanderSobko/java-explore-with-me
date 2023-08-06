@@ -1,4 +1,4 @@
-package ru.practicum.ewm.main.service.rate.event_rate;
+package ru.practicum.ewm.main.service.rate.event_rate.model;
 
 import lombok.*;
 

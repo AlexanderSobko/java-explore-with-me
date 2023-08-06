@@ -16,6 +16,8 @@ import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
 
+import static ru.practicum.ewm.main.service.event.mapper.EventMapper.EVENT_MAPPER;
+
 @Validated
 @RestController
 @RequiredArgsConstructor
@@ -41,7 +43,7 @@ public class EventController {
     @GetMapping("/users/{userId}/events/{eventId}")
     public ResponseEntity<EventDto> getEventByIdAndUser(@PathVariable @Positive int userId,
                                                         @PathVariable @Positive int eventId) {
-        return ResponseEntity.ok(EventDto.mapToEventDto(service.getByInitiatorAndId(userId, eventId)));
+        return ResponseEntity.ok(EVENT_MAPPER.mapToEventDto(service.getByInitiatorAndId(userId, eventId)));
     }
 
     @PatchMapping("/users/{userId}/events/{eventId}")

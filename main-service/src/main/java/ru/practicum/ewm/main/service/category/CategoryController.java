@@ -13,6 +13,8 @@ import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
 
+import static ru.practicum.ewm.main.service.category.mapper.CategoryMapper.CATEGORY_MAPPER;
+
 @Validated
 @RestController
 @RequiredArgsConstructor
@@ -46,7 +48,7 @@ public class CategoryController {
 
     @GetMapping("/categories/{categoryId}")
     public ResponseEntity<CategoryDto> getCategoryById(@PathVariable int categoryId) {
-        return ResponseEntity.ok(CategoryDto.mapToCategoryDto(service.getById(categoryId)));
+        return ResponseEntity.ok(CATEGORY_MAPPER.mapToCategoryDto(service.getById(categoryId)));
     }
 
 }
