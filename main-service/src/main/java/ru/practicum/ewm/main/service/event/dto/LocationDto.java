@@ -2,7 +2,6 @@ package ru.practicum.ewm.main.service.event.dto;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import ru.practicum.ewm.main.service.event.model.Location;
 
 import javax.validation.constraints.NotNull;
 
@@ -19,12 +18,5 @@ public class LocationDto {
     Float lon;
     @NotNull
     Float lat;
-
-    public static LocationDto mapToLocationDto(Location location) {
-        return LocationDto.builder()
-                .lat(location.getLat())
-                .lon(location.getLon())
-                .build();
-    }
 
 }

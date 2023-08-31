@@ -1,5 +1,6 @@
 package ru.practicum.ewm.main.service.user.service;
 
+import ru.practicum.ewm.main.service.event.dto.SortParam;
 import ru.practicum.ewm.main.service.user.dto.UserDto;
 import ru.practicum.ewm.main.service.user.model.User;
 
@@ -9,7 +10,7 @@ public interface UserService {
 
     UserDto save(UserDto dto);
 
-    List<UserDto> getAll(List<Integer> ids, int from, int size);
+    List<UserDto> getAll(List<Integer> ids, int from, int size, SortParam sortParam);
 
     void deleteById(int userId);
 

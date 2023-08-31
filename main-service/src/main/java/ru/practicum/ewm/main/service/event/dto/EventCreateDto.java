@@ -47,6 +47,7 @@ public class EventCreateDto {
     boolean paid;
     @PositiveOrZero
     int participantLimit;
+    @Builder.Default
     boolean requestModeration = true;
 
 }

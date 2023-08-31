@@ -9,6 +9,7 @@ import ru.practicum.ewm.main.service.compilation.dto.CompilationCreateDto;
 import ru.practicum.ewm.main.service.event.model.Event;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.List;
 
 @Entity
@@ -17,7 +18,7 @@ import java.util.List;
 @ToString
 @Table(name = "compilations")
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class Compilation {
+public class Compilation implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,6 +34,10 @@ public class Compilation {
             inverseJoinColumns = {@JoinColumn(name = "event_id")}
     )
     List<Event> events;
+    @Transient
+    long likes;
+    @Transient
+    long dislikes;
 
     public static Compilation mapToCompilation(CompilationCreateDto dto) {
         Compilation compilation = new Compilation();

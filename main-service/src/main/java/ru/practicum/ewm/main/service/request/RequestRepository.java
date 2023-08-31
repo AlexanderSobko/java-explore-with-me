@@ -6,6 +6,7 @@ import org.springframework.data.repository.query.Param;
 import ru.practicum.ewm.main.service.event.model.Event;
 import ru.practicum.ewm.main.service.event.model.EventRequestCount;
 import ru.practicum.ewm.main.service.request.model.Request;
+import ru.practicum.ewm.main.service.request.model.RequestStatus;
 import ru.practicum.ewm.main.service.user.model.User;
 
 import java.util.List;
@@ -26,5 +27,7 @@ public interface RequestRepository extends JpaRepository<Request, Integer> {
     boolean existsByRequesterAndEvent(User requester, Event event);
 
     Optional<Request> findByIdAndRequester(int requestId, User user);
+
+    boolean existsByRequesterAndEventAndRequestStatus(User requester, Event event, RequestStatus requestStatus);
 
 }

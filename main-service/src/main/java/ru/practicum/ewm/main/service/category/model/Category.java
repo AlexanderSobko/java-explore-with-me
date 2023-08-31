@@ -5,6 +5,7 @@ import lombok.experimental.FieldDefaults;
 import ru.practicum.ewm.main.service.category.dto.CategoryDto;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 @Getter
 @Setter
@@ -15,7 +16,7 @@ import javax.persistence.*;
 @AllArgsConstructor
 @Table(name = "categories")
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class Category {
+public class Category implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

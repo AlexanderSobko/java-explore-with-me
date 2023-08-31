@@ -2,9 +2,10 @@ package ru.practicum.ewm.main.service.event.model;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import ru.practicum.ewm.main.service.event.dto.LocationDto;
 
 import javax.persistence.*;
+import java.io.Serializable;
+import java.util.Objects;
 
 @Entity
 @Getter
@@ -15,7 +16,7 @@ import javax.persistence.*;
 @AllArgsConstructor
 @Table(name = "locations")
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class Location {
+public class Location implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,12 +26,17 @@ public class Location {
     @Column(nullable = false)
     float lon;
 
-    public static Location mapToLocation(LocationDto dto) {
-        return Location.builder()
-                .lat(dto.getLat())
-                .lon(dto.getLon())
-                .build();
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Location location = (Location) o;
+        return Float.compare(lat, location.lat) == 0 && Float.compare(lon, location.lon) == 0;
     }
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(lat, lon);
+    }
 }
 

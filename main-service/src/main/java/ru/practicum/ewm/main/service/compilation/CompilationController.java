@@ -9,11 +9,14 @@ import ru.practicum.ewm.main.service.compilation.dto.CompilationCreateDto;
 import ru.practicum.ewm.main.service.compilation.dto.CompilationDto;
 import ru.practicum.ewm.main.service.compilation.dto.CompilationUpdateDto;
 import ru.practicum.ewm.main.service.compilation.service.CompilationService;
+import ru.practicum.ewm.main.service.event.dto.SortParam;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
+
+import static ru.practicum.ewm.main.service.compilation.mapper.CompilationMapper.COMPILATION_MAPPER;
 
 @Validated
 @RestController
@@ -26,13 +29,14 @@ public class CompilationController {
     public ResponseEntity<List<CompilationDto>> getAllCompilations(
             @RequestParam(defaultValue = "false") boolean pinned,
             @RequestParam(defaultValue = "0") @PositiveOrZero int from,
-            @RequestParam(defaultValue = "10") @Positive int size) {
-        return ResponseEntity.ok(compilationService.getAllCompilations(pinned, from, size));
+            @RequestParam(defaultValue = "10") @Positive int size,
+            @RequestParam(required = false) SortParam sortParam) {
+        return ResponseEntity.ok(compilationService.getAllCompilations(pinned, from, size, sortParam));
     }
 
     @GetMapping("/compilations/{compId}")
     public ResponseEntity<CompilationDto> getCompilationById(@PathVariable @Positive int compId) {
-        return ResponseEntity.ok(CompilationDto.mapToCompilationDto(compilationService.getCompilationById(compId)));
+        return ResponseEntity.ok(COMPILATION_MAPPER.mapToCompilationDto(compilationService.getCompilationById(compId)));
     }
 
     @PostMapping("/admin/compilations")

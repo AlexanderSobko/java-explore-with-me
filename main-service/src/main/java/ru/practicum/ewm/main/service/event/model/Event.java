@@ -3,10 +3,10 @@ package ru.practicum.ewm.main.service.event.model;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import ru.practicum.ewm.main.service.category.model.Category;
-import ru.practicum.ewm.main.service.event.dto.EventCreateDto;
 import ru.practicum.ewm.main.service.user.model.User;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Entity
@@ -18,7 +18,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Table(name = "events")
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class Event {
+public class Event implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -43,7 +43,7 @@ public class Event {
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     EventState state;
-    @OneToOne(fetch = FetchType.EAGER)
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "location_id", nullable = false)
     Location location;
     @ManyToOne(fetch = FetchType.EAGER)
@@ -56,18 +56,9 @@ public class Event {
     long views;
     @Transient
     int confirmedRequests;
-
-    public static Event mapToEvent(EventCreateDto dto) {
-        return Event.builder()
-                .title(dto.getTitle())
-                .description(dto.getDescription())
-                .annotation(dto.getAnnotation())
-                .eventDate(dto.getEventDate())
-                .location(Location.mapToLocation(dto.getLocation()))
-                .participantLimit(dto.getParticipantLimit())
-                .requestModeration(dto.isRequestModeration())
-                .paid(dto.isPaid())
-                .build();
-    }
+    @Transient
+    long likes;
+    @Transient
+    long dislikes;
 
 }

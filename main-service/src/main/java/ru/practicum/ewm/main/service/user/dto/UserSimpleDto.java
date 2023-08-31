@@ -2,7 +2,6 @@ package ru.practicum.ewm.main.service.user.dto;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import ru.practicum.ewm.main.service.user.model.User;
 
 @Setter
 @Getter
@@ -13,12 +12,8 @@ public class UserSimpleDto {
 
     int id;
     String name;
-
-    public static UserSimpleDto mapToUserSimpleDto(User user) {
-        return UserSimpleDto.builder()
-                .id(user.getId())
-                .name(user.getName())
-                .build();
-    }
+    long likes;
+    long dislikes;
+    long rating;
 
 }
